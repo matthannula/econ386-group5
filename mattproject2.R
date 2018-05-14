@@ -4,24 +4,38 @@
 #Set working directory
 setwd(insert yours here)
 
-#Load libraries
+#Install Packages
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("plyr")
+install.packages("dplyr")
+install.packages("caret")
+
+#Load Libraries
+library(lattice)
+library(ggplot2)
 library(plyr)
 library(dplyr)
+library(caret)
 
-#Dataset Cleaning
-#The goal here is to create a usable dataset for our respective training 
-#so we can test and validate models individually.
-
+#Data Cleaning and Preprocessing
 #Bring in the training (larger) file
-proj2training <- read.csv("training.csv")
-View(proj2training)
+proj2trainfull <- read.csv("training.csv")
 
+#View the dataset if desired.
+View(proj2trainfull)
+head(proj2trainfull)
 
-#Set the seed (used class number), and partition the larger training CSV
-#into a training and a testing set at a 70/30 ratio.
+#Remove unnecessary rows and columns.
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
+
+#Partition the training file provided into a training and testing subset.
+#Set seed for reproducibility.
 set.seed(0386)
-trainingRowIndexProj2<-sample(1:nrow(proj2training), size = .7*nrow(proj2training))
-trainingDataProj2<-proj2training[trainingRowIndexProj2, ]
-testDataProj2 <-proj2training[-trainingRowIndexProj2, ]
 
-#Now we have data to create our own models and test them.
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep2), size = .7*nrow(proj2cleanstep2))
+trainFinal <-proj2cleanstep2[trainingRowIndexProj2, ]
+testFinal <-proj2cleanstep2[-trainingRowIndexProj2, ]
+
+#We now have trainFinal and testFinal, to train and validate our models.
