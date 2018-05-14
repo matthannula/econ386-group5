@@ -1,0 +1,35 @@
+---
+title: "Exectuive Summary for Project 2"
+output: pdf_document
+---
+
+##The raw data used in this project is sourced from text files from: https://github.com/slevkoff/ECON386REPO/tree/master/Data%20Cleaning%20Project/Task%201
+
+##Human Activity Recognition database built from the recordings of 30 subjects performing activities of daily living (ADL) while carrying a waist-mounted smartphone with embedded inertial sensors.The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years by UCI. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist.
+
+##The purpose of our project is to use a large set of training data (with inputs and outputs) to creaste a model to prdict, out-of-sample on the test dataset (a smaller set of data with input features only).
+
+###Data Cleaning and Preprocessing
+#Bring in the training (larger) file
+proj2trainfull <- read.csv("training.csv")
+
+#View the dataset if desired.
+View(proj2trainfull)
+head(proj2trainfull)
+
+#Remove unnecessary rows and columns.
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
+
+#Partition the training file provided into a training and testing subset.
+#Set seed for reproducibility.set.seed(0386)
+
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep2), size = .7*nrow(proj2cleanstep2))
+trainFinal <-proj2cleanstep2[trainingRowIndexProj2, ]
+testFinal <-proj2cleanstep2[-trainingRowIndexProj2, ]
+
+#We now have trainFinal and testFinal, to train and validate our models.
+
+##Also, in order to get the output data into numeric values, we used Excel as an intermediary and classified A as 1, B as 2 and so fourth. 
+
+
