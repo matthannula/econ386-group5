@@ -1,0 +1,91 @@
+---
+title: "Prediction Project red"
+author: "George Saunderson"
+date: "5/8/2018"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+
+```{r}
+library(dplyr)
+library(caret)
+library(randomForest)
+library(e1071)
+library(ggplot2)
+library(lattice)
+setwd("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2")
+```
+Loads dplyr, caret, randomForest, e1071, ggplot2, and lattice for use with rf analysis.
+
+
+```{r}
+dataset_training <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/training.csv")
+dataset_testing <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/testing.csv")
+```
+Simply imports the data with titles for the beginning steps of the data.
+
+```{r}
+dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
+dataset_training$X <- NULL
+dataset_testing$X <- NULL
+```
+Removes columns with empty cells only. Does NOT remove columns with NA in the cells. Nullifies irrelavant and unnecessary columns.
+
+
+```{r}
+training_data_index <- createDataPartition(dataset_training$classe, p=0.75, list=FALSE)
+test_trainingdata <- dataset_training[-training_data_index,]
+training_data <- dataset_training[training_data_index, ]
+```
+It separates the training data at a 75-25 split, 75% of the training data will be used for training and 25% of the training data with be used for testing.
+
+```{r}
+dim(dataset_testing)
+dim(dataset_training)
+dim(training_data)
+dim(test_trainingdata)
+```
+Shows the dimensions of each set of data so far.
+
+```{r}
+control <- trainControl(method = "cv", 20)
+metric <- "Accuracy"
+```
+Splits dataset into 20 different parts for crossvalidation.
+
+```{r}
+set.seed(5)
+rf_classe <- train(classe ~ ., data = training_data, na.action = na.exclude, method = "rf", metric = metric, trControl = control)
+
+set.seed(5)
+svm_classe <- train(classe ~ ., data = training_data, na.action = na.exclude, method = "svmRadial", metric = metric, trControl = control)
+
+set.seed(5)
+CART_classe <- train(classe ~ ., data = training_data, na.action = na.exclude, method = "rpart", metric = metric, trControl = control)
+
+set.seed(5)
+knn_classe <- train(classe ~ ., data = training_data, na.action = na.exclude, method = "knn", metric = metric, trControl = control)
+```
+Creates four different models (rf, svm, CART, and knn), two being non-linear and another two being advanced algorithms.
+
+```{r}
+results <- resamples(list(rf=rf_classe, svm=svm_classe, cart=CART_classe, knn=knn_classe))
+summary(results)
+dotplot(results)
+```
+Shows the results for each model to make a choice for the optimal model by both showing a summary and a dotplot for comparisons. (seed = group # [5])
+
+After seeing the results, rf looks to be the optimal model to proceed with.
+```{r}
+print(rf_classe)
+```
+Gives a summary of the rf_classe.
+
+```{r}
+predictions <- predict(rf_classe, test_trainingdata)
+head(predictions)
+```
+Shows the first five predictions based on the rf model applied to the test_trainingdata.
