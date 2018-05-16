@@ -40,7 +40,7 @@ Removes unnecessary rows and columns from both test and train datasets
 
 
 ```{r}
-set.seed(5)
+set.seed(0386)
 training_data_index <- createDataPartition(dataset_training_cleanF$classe, p=0.70, list=FALSE)
 test_trainingdata_1 <- dataset_training_cleanF[-training_data_index,]
 training_data <- dataset_training_cleanF[training_data_index, ]
@@ -48,7 +48,7 @@ training_data <- dataset_training_cleanF[training_data_index, ]
 It separates the training data at a 70-30 split, 70% of the training data will be used for training and 30% of the training data with be used for testing. Sets seet at 5 (group number = 5).
 
 ```{r}
-set.seed(5)
+set.seed(0386)
 test_trainingdata_2 <- sample(1:nrow(test_trainingdata_1), size = 0.5*nrow(test_trainingdata_1))
 tune_data <- test_trainingdata_1[test_trainingdata_2, ]
 test_data <- test_trainingdata_1[-test_trainingdata_2, ]
@@ -69,23 +69,29 @@ dim(test_data)
 Shows the dimensions of each set of data so far.
 
 ```{r}
-set.seed(5)
+set.seed(0386)
 control <- trainControl(method = "cv", 20)
 metric <- "Accuracy"
 ```
 Splits dataset into 20 different parts for crossvalidation. Sets seet at 5 (group number = 5).
 
 ```{r}
-set.seed(5)
+set.seed(0386)
 rf_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rf", metric = metric, trControl = control)
+CART_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rpart", metric = metric, trControl = control)
+results_classe <- resamples(list(cart=CART_classe, rf=rf_classe))
+summary(results_classe)
+```
+Creates a random forest model and sets seet at 5 (group number = 5). Displays summary to make decision on optimal model.
+
+```{r}
 prediction_rf <- predict(rf_classe, test_data)
 cM_rf <- confusionMatrix(prediction_rf, test_data$classe)
 ```
-Creates a random forest model and sets seet at 5 (group number = 5). Produces both a prediction and the confusion matrix for the given prediction of the test data.
+Produces both a prediction and the confusion matrix for the given prediction of the test data.
 
 ```{r}
 summary(rf_classe)
 print(rf_classe)
-dotplot(results)
 ```
 Shows the results of the model in graphics.
