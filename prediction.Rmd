@@ -4,9 +4,9 @@ output: html_document
 ---
 
 
-##Prediction Project##
+# **Prediction Project**
 
-**Executive Summary--Group 5**
+## **Executive Summary--Group 5**
 
 
 The raw data used in this project is sourced from text files from: https://github.com/slevkoff/ECON386REPO/tree/master/Data%20Cleaning%20Project/Task%201
@@ -15,7 +15,7 @@ Human Activity Recognition database built from the recordings of 30 subjects per
 
 The purpose of our project is to use a large set of training data (with inputs and outputs) to creaste a model to prdict, out-of-sample on the test dataset (a smaller set of data with input features only).
 
-Cleaning and Preprocessing the Data:
+## **Cleaning and Preprocessing the Data:**
 
 
 ```{r}
@@ -47,11 +47,11 @@ test_data <- test_trainingdata_1[-test_trainingdata_2, ]
 
 
 
-
+## **Models by Each Member**
 
 The following is each of the five group members code for his/her predictive models. 
 
-1. George Saunderson
+**1. George Saunderson**
 ```{r}
 library(dplyr)
 library(caret)
@@ -155,7 +155,7 @@ prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
 
 
 
-2. Christelle Matsuda
+# **2. Christelle Matsuda**
 
 ```{r}
 filepath<-"/Users/Christelle/Desktop/Prediction Project"  
@@ -179,7 +179,7 @@ library(tree)
 proj2training <- read.csv("training.csv")
 ```
 
-## Final Testing Set For Output
+ Final Testing Set For Output
 
 ```{r}
 finaltest <- read.csv("testing.csv")
@@ -209,7 +209,7 @@ proj2training <- select(proj2training,relevantvar)
 finaltest<- select(finaltest,relevantvar[1:54])
 ```
 
-# Partition Data
+ Partition Data
 
 ```{r}
 set.seed(0386)
@@ -265,7 +265,7 @@ final_predictions <- predict(model,finaltest)
 
 
 
-3. Gianna Rusca
+# **3. Gianna Rusca**
 
 Set working directory
 ```{r}
@@ -411,7 +411,7 @@ final_model<- predict(output4, proj2test)
 
 
 
-4. Matthew Parra
+# **4. Matthew Parra**
 
 #Set working directory 
 ```{r}
@@ -473,7 +473,7 @@ predictions <- predict(fit.knn, testFinal) confusionMatrix(predictions, testFina
 
 
 
-5. Matt Hannula 
+# **5. Matt Hannula**
 
 #Set working directory
 ```{r}
@@ -562,10 +562,33 @@ confusionMatrix(RFpredict, testFinal$classe)
 
 
 
-Selection of Final Model and Discussion
+# **Selection of Final Model and Discussion**
 
 All 5 memebers of our group uploaded his or her own code in order to select the model that gave the best prediction on the test data. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out-of-sample (on the testing data). 
 
 The final model we decided to implement was Matt's Random Forest. This used 10 parts for cross validation and a seed of 0386. It had the highest degree of accuracy at 0.9938 out-of-sample and a 95% confidence interval of (0.9902, 0.9963) and a p-value of < 2.2 e-16 which was the smallest out of all of the models.
 
+**Random Forest Model output for 20 testing data sample**
 
+Observation   | Output
+------------- | -------------
+1  | B
+2  | A
+3  | B
+4  | A
+5  | A
+6  | E
+7  | D
+8  | B
+9  | A
+10  | A
+11  | B
+12  | C
+13  | B
+14  | A
+15  | E
+16  | E
+17  | A
+18  | B
+19  | B
+20  | B
