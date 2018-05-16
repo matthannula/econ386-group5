@@ -4,9 +4,9 @@ output: html_document
 ---
 
 
-Prediction Project 
+###Prediction Project 
 
-Executive Summary--Group 5:
+#Executive Summary--Group 5:
 
 
 The raw data used in this project is sourced from text files from: https://github.com/slevkoff/ECON386REPO/tree/master/Data%20Cleaning%20Project/Task%201
@@ -43,9 +43,6 @@ tune_data <- test_trainingdata_1[test_trainingdata_2, ]
 test_data <- test_trainingdata_1[-test_trainingdata_2, ]
 ```
 
-
-
-*****MATT START HERE******
 
 
 
