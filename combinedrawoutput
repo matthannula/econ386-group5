@@ -1,0 +1,812 @@
+
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> getwd()
+[1] "C:/Users/Student/Documents"
+> library(plyr)
+Warning message:
+package ‘plyr’ was built under R version 3.4.4 
+> library(caret)
+Loading required package: lattice
+Loading required package: ggplot2
+Warning messages:
+1: package ‘caret’ was built under R version 3.4.4 
+2: package ‘lattice’ was built under R version 3.4.4 
+3: package ‘ggplot2’ was built under R version 3.4.4 
+> library(nnet)
+> library(brew)
+Error in library(brew) : there is no package called ‘brew’
+> library(sos)
+Error in library(sos) : there is no package called ‘sos’
+> library(MASS)
+> require(dplyr)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:MASS’:
+
+    select
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise, summarize
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> library(tree)
+Error in library(tree) : there is no package called ‘tree’
+> #Load libraries
+> install.packages("tree")
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/tree_1.0-39.zip'
+Content type 'application/zip' length 122322 bytes (119 KB)
+downloaded 119 KB
+
+package ‘tree’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\Student\AppData\Local\Temp\RtmpALA570\downloaded_packages
+> library(tree)
+Warning message:
+package ‘tree’ was built under R version 3.4.4 
+> library(plyr)
+> library(caret)
+> library(nnet)
+> library(brew)
+Error in library(brew) : there is no package called ‘brew’
+> library(sos)
+Error in library(sos) : there is no package called ‘sos’
+> library(MASS)
+> require(dplyr)
+> install.packages("sos")
+also installing the dependency ‘brew’
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/brew_1.0-6.zip'
+Content type 'application/zip' length 104994 bytes (102 KB)
+downloaded 102 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/sos_2.0-0.zip'
+Content type 'application/zip' length 233663 bytes (228 KB)
+downloaded 228 KB
+
+package ‘brew’ successfully unpacked and MD5 sums checked
+package ‘sos’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\Student\AppData\Local\Temp\RtmpALA570\downloaded_packages
+> install.packages("nnet")
+Error in install.packages : Updating loaded packages
+> install.packages("nnet")
+Error in install.packages : Updating loaded packages
+> install.packages("nnet")
+Warning in install.packages :
+  package ‘nnet’ is in use and will not be installed
+> library(MASS)
+> library(sos)
+Loading required package: brew
+
+Attaching package: ‘sos’
+
+The following object is masked from ‘package:dplyr’:
+
+    matches
+
+The following object is masked from ‘package:utils’:
+
+    ?
+
+Warning message:
+package ‘sos’ was built under R version 3.4.4 
+> library(brew)
+> library(caret)
+> library(plyr)
+> require(dplyr)
+> # Import Data
+> #Bring in the training (larger) file
+> proj2training <- read.csv("training.csv")
+> ## Final Testing Set For Output
+> finaltest <- read.csv("testing.csv")
+> relevantvar <- c("user_name","num_window","roll_belt","pitch_belt",	"yaw_belt",	"total_accel_belt",
++                  "gyros_belt_x",	"gyros_belt_y",	"gyros_belt_z",	"accel_belt_x","accel_belt_y","accel_belt_z",
++                  "magnet_belt_x",	"magnet_belt_y", "magnet_belt_z",	
++                  "roll_arm","pitch_arm", "yaw_arm",	"total_accel_arm",
++                  "gyros_arm_x",	"gyros_arm_y",	"gyros_arm_z",	
++                  "accel_arm_x",	"accel_arm_y","accel_arm_z",
++                  "magnet_arm_x",	"magnet_arm_y", "magnet_arm_z",
++                  "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell",
++                  "total_accel_dumbbell",
++                  "gyros_dumbbell_x",	"gyros_dumbbell_y",	"gyros_dumbbell_z",	
++                  "accel_dumbbell_x",	"accel_dumbbell_y","accel_dumbbell_z",
++                  "magnet_dumbbell_x",	"magnet_dumbbell_y",	"magnet_dumbbell_z",	
++                  "roll_forearm",	"pitch_forearm",	"yaw_forearm",
++                  "total_accel_forearm",
++                  "gyros_forearm_x",	"gyros_forearm_y",	"gyros_forearm_z",
++                  "accel_forearm_x",	"accel_forearm_y",	"accel_forearm_z",
++                  "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z",
++                  "classe")
+> relevantvar2 <- c("user_name","num_window","roll_belt","pitch_belt",	"yaw_belt",	"total_accel_belt",
++                   "gyros_belt_x",	"gyros_belt_y",	"gyros_belt_z",	"accel_belt_x","accel_belt_y","accel_belt_z",
++                   "magnet_belt_x",	"magnet_belt_y", "magnet_belt_z",	
++                   "roll_arm","pitch_arm", "yaw_arm",	"total_accel_arm",
++                   "gyros_arm_x",	"gyros_arm_y",	"gyros_arm_z",	
++                   "accel_arm_x",	"accel_arm_y","accel_arm_z",
++                   "magnet_arm_x",	"magnet_arm_y", "magnet_arm_z",
++                   "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell",
++                   "total_accel_dumbbell",
++                   "gyros_dumbbell_x",	"gyros_dumbbell_y",	"gyros_dumbbell_z",	
++                   "accel_dumbbell_x",	"accel_dumbbell_y","accel_dumbbell_z",
++                   "magnet_dumbbell_x",	"magnet_dumbbell_y",	"magnet_dumbbell_z",	
++                   "roll_forearm",	"pitch_forearm",	"yaw_forearm",
++                   "total_accel_forearm",
++                   "gyros_forearm_x",	"gyros_forearm_y",	"gyros_forearm_z",
++                   "accel_forearm_x",	"accel_forearm_y",	"accel_forearm_z",
++                   "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z")
+> proj2training <- select(proj2training,relevantvar)
+> proj2training <- read.csv("training.csv")
+> proj2training <- select(proj2training,relevantvar)
+> # Partition Data
+> set.seed(0386)
+> trainingRowIndexProj2<-sample(1:nrow(proj2training), size = .7*nrow(proj2training))
+> #Training Dataset
+> training<-proj2training[trainingRowIndexProj2, ]
+> training<- data.frame(training)
+> #Testing Dataset
+> testing<-proj2training[-trainingRowIndexProj2, ]
+> testing <- data.frame(testing)
+> ## Final Test
+> finaltest <- data.frame(finaltest)
+> finaltest <- select(finaltest,relevantvar2)
+> model <- train(classe~., data = training, method = "rf",
++                trControl = trainControl(method = "cv", number = 5, verboseIter = TRUE)
++ )
+1 package is needed for this model and is not installed. (randomForest). Would you like to try to install it now?
+1: yes
+2: no
+
+Selection: 1
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/randomForest_4.6-14.zip'
+Content type 'application/zip' length 180755 bytes (176 KB)
+downloaded 176 KB
+
+package ‘randomForest’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+	C:\Users\Student\AppData\Local\Temp\RtmpALA570\downloaded_packages
++ Fold1: mtry= 2 
+- Fold1: mtry= 2 
++ Fold1: mtry=30 
+- Fold1: mtry=30 
++ Fold1: mtry=58 
+- Fold1: mtry=58 
++ Fold2: mtry= 2 
+- Fold2: mtry= 2 
++ Fold2: mtry=30 
+- Fold2: mtry=30 
++ Fold2: mtry=58 
+- Fold2: mtry=58 
++ Fold3: mtry= 2 
+- Fold3: mtry= 2 
++ Fold3: mtry=30 
+- Fold3: mtry=30 
++ Fold3: mtry=58 
+- Fold3: mtry=58 
++ Fold4: mtry= 2 
+- Fold4: mtry= 2 
++ Fold4: mtry=30 
+- Fold4: mtry=30 
++ Fold4: mtry=58 
+- Fold4: mtry=58 
++ Fold5: mtry= 2 
+- Fold5: mtry= 2 
++ Fold5: mtry=30 
+- Fold5: mtry=30 
++ Fold5: mtry=58 
+- Fold5: mtry=58 
+Aggregating results
+Selecting tuning parameters
+Fitting mtry = 30 on full training set
+> model <- train(classe~., data = training, method = "rf",
++                trControl = trainControl(method = "cv", number = 5, verboseIter = TRUE)
++ )
++ Fold1: mtry= 2 
+- Fold1: mtry= 2 
++ Fold1: mtry=30 
+- Fold1: mtry=30 
++ Fold1: mtry=58 
+- Fold1: mtry=58 
++ Fold2: mtry= 2 
+- Fold2: mtry= 2 
++ Fold2: mtry=30 
+- Fold2: mtry=30 
++ Fold2: mtry=58 
+- Fold2: mtry=58 
++ Fold3: mtry= 2 
+- Fold3: mtry= 2 
++ Fold3: mtry=30 
+- Fold3: mtry=30 
++ Fold3: mtry=58 
+- Fold3: mtry=58 
++ Fold4: mtry= 2 
+- Fold4: mtry= 2 
++ Fold4: mtry=30 
+- Fold4: mtry=30 
++ Fold4: mtry=58 
+- Fold4: mtry=58 
++ Fold5: mtry= 2 
+- Fold5: mtry= 2 
++ Fold5: mtry=30 
+- Fold5: mtry=30 
++ Fold5: mtry=58 
+- Fold5: mtry=58 
+Aggregating results
+Selecting tuning parameters
+Fitting mtry = 30 on full training set
+> final_predictions <- predict(model,finaltest)
+> View(final_predictions)
+> View(model)
+> confusionMatrix(model, training$classe)
+Error in match.arg(norm, c("none", "overall", "average")) : 
+  'arg' must be NULL or a character vector
+> final_predictions <- predict(model, testing$classe)
+Error in eval(predvars, data, env) : object 'user_name' not found
+> rm(list=ls())
+> proj2testfull <- read.csv("testing.csv", header = TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'testing.csv': No such file or directory
+> getwd()
+[1] "C:/Users/Student/Documents"
+> #Data Cleaning and Preprocessing
+> #Bring in the training (larger) file
+> proj2trainfull <- read.csv("training.csv", header = TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'training.csv': No such file or directory
+> setwd("")
+Error in setwd("") : cannot change working directory
+> getwd()
+[1] "C:/Users/Student/Documents"
+> setwd("Documents")
+Error in setwd("Documents") : cannot change working directory
+> #Data Cleaning and Preprocessing
+> #Bring in the training (larger) file
+> proj2trainfull <- read.csv("training.csv", header = TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'training.csv': No such file or directory
+> #Data Cleaning and Preprocessing
+> #Bring in the training (larger) file
+> proj2trainfull <- read.csv("training.csv", header = TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'training.csv': No such file or directory
+> proj2testfull <- read.csv("testing.csv", header = TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'testing.csv': No such file or directory
+> #Data Cleaning and Preprocessing
+> #Bring in the training (larger) file
+> proj2trainfull <- read.csv("training.csv", header = TRUE)
+> proj2testfull <- read.csv("testing.csv", header = TRUE)
+> outofsampletest <- proj2testfull[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+> write.csv(outofsampletest, "check.csv")
+> cleantest <- proj2testfull[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+> OOStest <- cleantest[, colSums(is.na(proj2cleanstep1)) == 0]
+Error in is.data.frame(x) : object 'proj2cleanstep1' not found
+> OOStest <- cleantest[, colSums(is.na(cleantest)) == 0]
+> write.csv(OOStest, "check.csv")
+Error in file(file, ifelse(append, "a", "w")) : 
+  cannot open the connection
+In addition: Warning message:
+In file(file, ifelse(append, "a", "w")) :
+  cannot open file 'check.csv': Permission denied
+> write.csv(OOStest, "check1.csv")
+> outofsampletest <- proj2testfull[, -c(1:5, 11:35, 49:58, 68:82, 86:100, 102:111, 124:138, 140:149)]
+> #Remove unnecessary rows and columns.
+> proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+Warning message:
+package ‘bindrcpp’ was built under R version 3.4.4 
+> proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0]
+> #View the CSV to determine unnecessary columns. Drop empty columns.
+> proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+> write.csv(outofsampletest, "abcd.csv")
+> write.csv(proj2cleanstep3, "defg.csv")
+> outofsampletest <- proj2testfull[, -c(1:6, 11:35, 49:58, 68:82, 86:100, 102:111, 124:138, 140:149)]
+> write.csv(outofsampletest, "abcd.csv")
+Error in file(file, ifelse(append, "a", "w")) : 
+  cannot open the connection
+In addition: Warning message:
+In file(file, ifelse(append, "a", "w")) :
+  cannot open file 'abcd.csv': Permission denied
+> write.csv(outofsampletest, "abcd.csv")
+> outofsampletest <- proj2testfull[, -c(1:7, 11:35, 49:58, 68:82, 86:100, 102:111, 124:138, 140:149)]
+> write.csv(proj2cleanstep3, "defg.csv")
+> write.csv(outofsampletest, "abcd.csv")
+> #Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
+> set.seed(0386)
+> trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+> trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
+> testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
+> #Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
+> testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+> tuneFinal <-testTune[testTuneIndexProj2, ]
+> testFinal <-testTune[-testTuneIndexProj2, ]
+> #Setting ML parameters
+> set.seed(0386)
+> control <- trainControl(method="cv", number=10)
+> metric <- "Accuracy"
+> #Matt Models
+> #Test Nonlinear SVM
+> set.seed(0386)
+> mattSVMnl <- train(classe~., data=trainFinal, method = "svmRadial", metric=metric, trControl=control)
+> SVMnlpredict <- predict(mattSVMnl, testFinal)
+> confusionMatrix(SVMnlpredict, testFinal$classe)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   A   B   C   D   E
+         A 811  60   1   1   2
+         B   1 482  24   0   4
+         C   2  26 465  43  27
+         D   0   2   5 427  12
+         E   3   0   0   0 485
+
+Overall Statistics
+                                         
+               Accuracy : 0.9261         
+                 95% CI : (0.916, 0.9354)
+    No Information Rate : 0.2834         
+    P-Value [Acc > NIR] : < 2.2e-16      
+                                         
+                  Kappa : 0.9064         
+ Mcnemar's Test P-Value : < 2.2e-16      
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.9927   0.8456   0.9394   0.9066   0.9151
+Specificity            0.9690   0.9875   0.9590   0.9921   0.9987
+Pos Pred Value         0.9269   0.9432   0.8259   0.9574   0.9939
+Neg Pred Value         0.9970   0.9629   0.9871   0.9819   0.9812
+Prevalence             0.2834   0.1977   0.1717   0.1634   0.1838
+Detection Rate         0.2813   0.1672   0.1613   0.1481   0.1682
+Detection Prevalence   0.3035   0.1772   0.1953   0.1547   0.1693
+Balanced Accuracy      0.9808   0.9165   0.9492   0.9494   0.9569
+> #Testing Random Forest
+> set.seed(0386)
+> mattRF <- train(classe~., data=trainFinal, method="rf", metric=metric, trControl=control)
+> mattRFpredict <- predict(mattRF, testFinal)
+> confusionMatrix(mattRFpredict, testFinal$classe)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   A   B   C   D   E
+         A 817   5   0   0   0
+         B   0 565   6   0   0
+         C   0   0 488   5   0
+         D   0   0   1 466   1
+         E   0   0   0   0 529
+
+Overall Statistics
+                                          
+               Accuracy : 0.9938          
+                 95% CI : (0.9902, 0.9963)
+    No Information Rate : 0.2834          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9921          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            1.0000   0.9912   0.9859   0.9894   0.9981
+Specificity            0.9976   0.9974   0.9979   0.9992   1.0000
+Pos Pred Value         0.9939   0.9895   0.9899   0.9957   1.0000
+Neg Pred Value         1.0000   0.9978   0.9971   0.9979   0.9996
+Prevalence             0.2834   0.1977   0.1717   0.1634   0.1838
+Detection Rate         0.2834   0.1960   0.1693   0.1616   0.1835
+Detection Prevalence   0.2851   0.1981   0.1710   0.1623   0.1835
+Balanced Accuracy      0.9988   0.9943   0.9919   0.9943   0.9991
+> mattoutofsamplepreds <- predict(mattRFpredict, OOStest)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> mattoutofsamplepreds <- predict(mattRFpredict, outofsampletest)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> mattoutofsamplepreds <- predict(mattRFpredict, proj2testfull)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> outofsample <- read.csv("testing.csv")
+> outofsample <- data.frame(outofsample)
+> mattoos <- predict(mattRFpredict, outofsample)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> #Load libraries
+> install.packages("tree")
+Error in install.packages : Updating loaded packages
+> install.packages("tree")
+Warning in install.packages :
+  package ‘tree’ is in use and will not be installed
+> # Import Data
+> #Bring in the training (larger) file
+> proj2training <- read.csv("training.csv")
+> ## Final Testing Set For Output
+> finaltest <- read.csv("testing.csv")
+> relevantvar <- c("user_name","num_window","roll_belt","pitch_belt",	"yaw_belt",	"total_accel_belt",
++                  "gyros_belt_x",	"gyros_belt_y",	"gyros_belt_z",	"accel_belt_x","accel_belt_y","accel_belt_z",
++                  "magnet_belt_x",	"magnet_belt_y", "magnet_belt_z",	
++                  "roll_arm","pitch_arm", "yaw_arm",	"total_accel_arm",
++                  "gyros_arm_x",	"gyros_arm_y",	"gyros_arm_z",	
++                  "accel_arm_x",	"accel_arm_y","accel_arm_z",
++                  "magnet_arm_x",	"magnet_arm_y", "magnet_arm_z",
++                  "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell",
++                  "total_accel_dumbbell",
++                  "gyros_dumbbell_x",	"gyros_dumbbell_y",	"gyros_dumbbell_z",	
++                  "accel_dumbbell_x",	"accel_dumbbell_y","accel_dumbbell_z",
++                  "magnet_dumbbell_x",	"magnet_dumbbell_y",	"magnet_dumbbell_z",	
++                  "roll_forearm",	"pitch_forearm",	"yaw_forearm",
++                  "total_accel_forearm",
++                  "gyros_forearm_x",	"gyros_forearm_y",	"gyros_forearm_z",
++                  "accel_forearm_x",	"accel_forearm_y",	"accel_forearm_z",
++                  "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z",
++                  "classe")
+> relevantvar2 <- c("user_name","num_window","roll_belt","pitch_belt",	"yaw_belt",	"total_accel_belt",
++                   "gyros_belt_x",	"gyros_belt_y",	"gyros_belt_z",	"accel_belt_x","accel_belt_y","accel_belt_z",
++                   "magnet_belt_x",	"magnet_belt_y", "magnet_belt_z",	
++                   "roll_arm","pitch_arm", "yaw_arm",	"total_accel_arm",
++                   "gyros_arm_x",	"gyros_arm_y",	"gyros_arm_z",	
++                   "accel_arm_x",	"accel_arm_y","accel_arm_z",
++                   "magnet_arm_x",	"magnet_arm_y", "magnet_arm_z",
++                   "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell",
++                   "total_accel_dumbbell",
++                   "gyros_dumbbell_x",	"gyros_dumbbell_y",	"gyros_dumbbell_z",	
++                   "accel_dumbbell_x",	"accel_dumbbell_y","accel_dumbbell_z",
++                   "magnet_dumbbell_x",	"magnet_dumbbell_y",	"magnet_dumbbell_z",	
++                   "roll_forearm",	"pitch_forearm",	"yaw_forearm",
++                   "total_accel_forearm",
++                   "gyros_forearm_x",	"gyros_forearm_y",	"gyros_forearm_z",
++                   "accel_forearm_x",	"accel_forearm_y",	"accel_forearm_z",
++                   "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z")
+> proj2training <- select(proj2training,relevantvar)
+> # Partition Data
+> set.seed(0386)
+> trainingRowIndexProj2<-sample(1:nrow(proj2training), size = .7*nrow(proj2training))
+> #Training Dataset
+> training<-proj2training[trainingRowIndexProj2, ]
+> training<- data.frame(training)
+> #Testing Dataset
+> testing<-proj2training[-trainingRowIndexProj2, ]
+> testing <- data.frame(testing)
+> ## Final Test
+> finaltest <- data.frame(finaltest)
+> finaltest <- select(finaltest,relevantvar2)
+> model <- train(classe~., data = training, method = "rf",
++                trControl = trainControl(method = "cv", number = 5, verboseIter = TRUE)
++ )
++ Fold1: mtry= 2 
+- Fold1: mtry= 2 
++ Fold1: mtry=30 
+- Fold1: mtry=30 
++ Fold1: mtry=58 
+- Fold1: mtry=58 
++ Fold2: mtry= 2 
+- Fold2: mtry= 2 
++ Fold2: mtry=30 
+- Fold2: mtry=30 
++ Fold2: mtry=58 
+- Fold2: mtry=58 
++ Fold3: mtry= 2 
+- Fold3: mtry= 2 
++ Fold3: mtry=30 
+- Fold3: mtry=30 
++ Fold3: mtry=58 
+- Fold3: mtry=58 
++ Fold4: mtry= 2 
+- Fold4: mtry= 2 
++ Fold4: mtry=30 
+- Fold4: mtry=30 
++ Fold4: mtry=58 
+- Fold4: mtry=58 
++ Fold5: mtry= 2 
+- Fold5: mtry= 2 
++ Fold5: mtry=30 
+- Fold5: mtry=30 
++ Fold5: mtry=58 
+- Fold5: mtry=58 
+Aggregating results
+Selecting tuning parameters
+Fitting mtry = 30 on full training set
+> mattoutofsamplepreds <- predict(mattRFpredict, outofsampletest$classe)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> library(caret)
+> mattoutofsamplepreds <- predict(mattRFpredict, outofsampletest$classe)
+Error in UseMethod("predict") : 
+  no applicable method for 'predict' applied to an object of class "factor"
+> tree_predict <- predict(model,testing)
+> ## Checking accuracy
+> total <- 0
+> count <- 0
+> for(k in 1:length(tree_predict))
++ {
++   total <- total +1
++   if (testing$classe[k]==tree_predict[k])
++   {
++     count <- count + 1
++   }
++ }
+> percent<- count/total
+> percent
+[1] 0.9983013
+> final_predictions <- predict(model, testing$classe)
+Error in eval(predvars, data, env) : object 'user_name' not found
+> library(lattice)
+> library(ggplot2)
+> library(plyr)
+> library(caret)
+> library(nnet)
+> library(brew)
+> library(sos)
+> library(MASS)
+> require(dplyr)
+> library(tree)
+> library("nnet")
+> #Random Forest: Best accuracy given in comparison to other 2 models
+> set.seed(0386)
+> control <- trainControl(method="cv", number=8)
+> metric <- "Accuracy"
+> #Random Forest seed set
+> library(caret)
+> set.seed(0386)
+> #Install package to run Random Forest package
+> install.packages('e1071', dependencies=TRUE)
+Error in install.packages : Updating loaded packages
+> install.packages("e1071", dependencies = TRUE)
+also installing the dependency ‘mlbench’
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/mlbench_2.1-1.zip'
+Content type 'application/zip' length 1033552 bytes (1009 KB)
+downloaded 1009 KB
+
+trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.4/e1071_1.6-8.zip'
+Content type 'application/zip' length 895265 bytes (874 KB)
+downloaded 874 KB
+
+package ‘mlbench’ successfully unpacked and MD5 sums checked
+package ‘e1071’ successfully unpacked and MD5 sums checked
+Warning in install.packages :
+  cannot remove prior installation of package ‘e1071’
+
+The downloaded binary packages are in
+	C:\Users\Student\AppData\Local\Temp\RtmpALA570\downloaded_packages
+> #Run random forest algorithm on training data
+> output4 <- train(classe~., data=trainFinal, method="rf", metric=metric, trControl=control)
+> #Run the trained model on the unsupervised data provided by Dr. Levkoff.
+> mattRFoutofsample <- predict(mattRF, outofsampletest)
+Error in eval(predvars, data, env) : object 'total_accel_belt' not found
+> #Run the trained model on the unsupervised data provided by Dr. Levkoff.
+> mattRFoutofsample <- predict(mattRF, proj2testfull)
+> write.csv(mattRFoutofsample, "mattRFoutofsamplepreds.csv")
+> #Run random forest prediction on testing data 
+> model_predict_4<- predict(output4, testFinal)
+> confusionMatrix(model_predict_4, testFinal$classe)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   A   B   C   D   E
+         A 815   7   0   0   0
+         B   0 560   4   0   0
+         C   1   3 486   5   0
+         D   0   0   5 466   1
+         E   1   0   0   0 529
+
+Overall Statistics
+                                          
+               Accuracy : 0.9906          
+                 95% CI : (0.9864, 0.9938)
+    No Information Rate : 0.2834          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9882          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.9976   0.9825   0.9818   0.9894   0.9981
+Specificity            0.9966   0.9983   0.9962   0.9975   0.9996
+Pos Pred Value         0.9915   0.9929   0.9818   0.9873   0.9981
+Neg Pred Value         0.9990   0.9957   0.9962   0.9979   0.9996
+Prevalence             0.2834   0.1977   0.1717   0.1634   0.1838
+Detection Rate         0.2827   0.1942   0.1686   0.1616   0.1835
+Detection Prevalence   0.2851   0.1956   0.1717   0.1637   0.1838
+Balanced Accuracy      0.9971   0.9904   0.9890   0.9934   0.9988
+> #Run random forest prediction on test data from Levkoff
+> final_model<- predict(output4, proj2test)
+Error in predict.train(output4, proj2test) : object 'proj2test' not found
+> dataset_training <- read.csv("training.csv", header = TRUE)
+> dataset_testing <- read.csv("testing.csv", header = TRUE)
+> dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
+> dataset_training$X <- NULL
+> dataset_training_cleanF <- dataset_training[ ,colSums(is.na(dataset_training)) == 0]
+> dataset_testing[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
+> dataset_testing$X <- NULL
+> dataset_testing_cleanF <- dataset_testing[ ,colSums(is.na(dataset_testing)) == 0]
+> set.seed(0386)
+> training_data_index <- createDataPartition(dataset_training_cleanF$classe, p=0.70, list=FALSE)
+> test_trainingdata_1 <- dataset_training_cleanF[-training_data_index,]
+> training_data <- dataset_training_cleanF[training_data_index, ]
+> set.seed(0386)
+> test_trainingdata_2 <- sample(1:nrow(test_trainingdata_1), size = 0.5*nrow(test_trainingdata_1))
+> tune_data <- test_trainingdata_1[test_trainingdata_2, ]
+> test_data <- test_trainingdata_1[-test_trainingdata_2, ]
+> dim(dataset_testing)
+[1]  20 126
+> dim(dataset_testing_cleanF)
+[1] 20 59
+> dim(dataset_training)
+[1] 19622   126
+> dim(dataset_training_cleanF)
+[1] 19622    59
+> dim(training_data)
+[1] 13737    59
+> dim(test_trainingdata_1)
+[1] 5885   59
+> length(as.numeric(test_trainingdata_2))
+[1] 2942
+> dim(tune_data)
+[1] 2942   59
+> dim(test_data)
+[1] 2943   59
+> set.seed(0386)
+> control <- trainControl(method = "cv", 20)
+> metric <- "Accuracy"
+> set.seed(0386)
+> rf_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rf", metric = metric, trControl = control)
+
+> control <- trainControl(method="cv", number=1)
+> rf_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rf", metric = metric, trControl = control)
+Something is wrong; all the Accuracy metric values are missing:
+    Accuracy       Kappa    
+ Min.   : NA   Min.   : NA  
+ 1st Qu.: NA   1st Qu.: NA  
+ Median : NA   Median : NA  
+ Mean   :NaN   Mean   :NaN  
+ 3rd Qu.: NA   3rd Qu.: NA  
+ Max.   : NA   Max.   : NA  
+ NA's   :3     NA's   :3    
+Error: Stopping
+In addition: Warning messages:
+1: model fit failed for Fold1: mtry= 2 Error in randomForest.default(x, y, mtry = param$mtry, ...) : 
+  Need at least two classes to do classification.
+ 
+2: model fit failed for Fold1: mtry=41 Error in randomForest.default(x, y, mtry = param$mtry, ...) : 
+  Need at least two classes to do classification.
+ 
+3: model fit failed for Fold1: mtry=80 Error in randomForest.default(x, y, mtry = param$mtry, ...) : 
+  Need at least two classes to do classification.
+ 
+4: In nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  :
+  There were missing values in resampled performance measures.
+> control <- trainControl(method = "cv", 5)
+> metric <- "Accuracy"
+> set.seed(0386)
+> rf_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rf", metric = metric, trControl = control)
+> CART_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rpart", metric = metric, trControl = control)
+> results_classe <- resamples(list(cart=CART_classe, rf=rf_classe))
+> summary(results_classe)
+
+Call:
+summary.resamples(object = results_classe)
+
+Models: cart, rf 
+Number of resamples: 5 
+
+Accuracy 
+          Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA's
+cart 0.3667152 0.4655988 0.4863487 0.5029919 0.5769371 0.6193595    0
+rf   0.9974536 0.9985439 0.9992719 0.9988355 0.9992719 0.9996360    0
+
+Kappa 
+          Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA's
+cart 0.1253031 0.3117335 0.3570251 0.3534581 0.4622299 0.5109988    0
+rf   0.9967790 0.9981581 0.9990791 0.9985270 0.9990791 0.9995396    0
+
+> prediction_rf <- predict(rf_classe, test_data)
+> cM_rf <- confusionMatrix(prediction_rf, test_data$classe)
+> prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
+> #Matthew Parra
+> #Install Packages
+> install.packages("lattice")
+Error in install.packages : Updating loaded packages
+> install.packages("lattice")
+Warning in install.packages :
+  package ‘lattice’ is in use and will not be installed
+> install.packages("ggplot2")
+Error in install.packages : Updating loaded packages
+> install.packages("ggplot2")
+Warning in install.packages :
+  package ‘ggplot2’ is in use and will not be installed
+> #Load Libraries
+> library(lattice)
+> library(ggplot2)
+> library(plyr)
+> library(dplyr)
+> library(caret)
+> control <- trainControl(method="cv", number=10)
+> metric <- "Accuracy"
+> set.seed(0386)
+> fit.lda <- train(classe~., data=trainFinal, method="lda", metric=metric, trControl=control)
+> #k-nearest neighbors
+> set.seed(0386)
+> fit.knn <- train(classe~., data=trainFinal, method="knn", metric=metric, trControl=control)
+> #Predict test data
+> predictions <- predict(fit.knn, testFinal)
+> confusionMatrix(predictions, testFinal$classe)
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   A   B   C   D   E
+         A 784  32   4   7   7
+         B   8 491  23   2  24
+         C  10  24 450  27  18
+         D  12  12  11 431  20
+         E   3  11   7   4 461
+
+Overall Statistics
+                                          
+               Accuracy : 0.9077          
+                 95% CI : (0.8966, 0.9181)
+    No Information Rate : 0.2834          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.8833          
+ Mcnemar's Test P-Value : 4.602e-08       
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            0.9596   0.8614   0.9091   0.9151   0.8698
+Specificity            0.9758   0.9754   0.9669   0.9772   0.9894
+Pos Pred Value         0.9400   0.8960   0.8507   0.8868   0.9486
+Neg Pred Value         0.9839   0.9662   0.9809   0.9833   0.9712
+Prevalence             0.2834   0.1977   0.1717   0.1634   0.1838
+Detection Rate         0.2719   0.1703   0.1561   0.1495   0.1599
+Detection Prevalence   0.2893   0.1901   0.1835   0.1686   0.1686
+Balanced Accuracy      0.9677   0.9184   0.9380   0.9461   0.9296
+> #Consolidated Model Comparisons
+> groupresults <- resamples(list(ChristelleRF=model, MattSVM=SVMnlpredict, MattRF=mattRFpredict, GiannaRF=output4, GeorgeCART=CART_classe. GeorgeRF=rf_classe, ParraLinear=fit.lda, ParraKNN=fit.knn ))
+Error: unexpected symbol in "groupresults <- resamples(list(ChristelleRF=model, MattSVM=SVMnlpredict, MattRF=mattRFpredict, GiannaRF=output4, GeorgeCART=CART_classe. GeorgeRF"
+> #Consolidated Model Comparisons
+> groupresults <- resamples(list(ChristelleRF=model, MattSVM=SVMnlpredict, MattRF=mattRFpredict, GiannaRF=output4, GeorgeCART=CART_classe, GeorgeRF=rf_classe, ParraLinear=fit.lda, ParraKNN=fit.knn ))
+Error: $ operator is invalid for atomic vectors
+> #Consolidated Model Comparisons
+> groupresults <- resamples(list(ChristelleRF=model, MattSVM=SVMnlpredict, MattRF=mattRFpredict, GiannaRF=output4, GeorgeCART=CART_classe, GeorgeRF=rf_classe, ParraLinear=fit.lda, ParraKNN=fit.knn))
+Error: $ operator is invalid for atomic vectors
+> parraresults <- resamples(list(ParraLDA=fit.lda, ParraKNN=fit.knn))
