@@ -2,7 +2,7 @@
 #Matt Hannula
 
 #Set working directory
-setwd(insert yours here)
+setwd("/Documents/GitHub/ECON386REPO/project2")
 
 #Install Packages
 install.packages("lattice")
@@ -20,7 +20,7 @@ library(caret)
 
 #Data Cleaning and Preprocessing
 #Bring in the training (larger) file
-proj2trainfull <- read.csv("training.csv")
+proj2trainfull <- read.csv("training.csv", header = TRUE)
 
 #View the dataset if desired.
 View(proj2trainfull)
@@ -30,12 +30,17 @@ head(proj2trainfull)
 proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
 proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
 
-#Partition the training file provided into a training and testing subset.
-#Set seed for reproducibility.
+#View the CSV to determine unnecessary columns. Drop empty columns.
+proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+
+#Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
 set.seed(0386)
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
+testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
 
-trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep2), size = .7*nrow(proj2cleanstep2))
-trainFinal <-proj2cleanstep2[trainingRowIndexProj2, ]
-testFinal <-proj2cleanstep2[-trainingRowIndexProj2, ]
-
-#We now have trainFinal and testFinal, to train and validate our models.
+#Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+tuneFinal <-testTune[testTuneIndexProj2, ]
+testFinal <-testTune[-testTuneIndexProj2, ]
+#We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respectively.
