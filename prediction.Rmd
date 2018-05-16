@@ -582,15 +582,15 @@ Overall Statistics
 Statistics by Class:
 
                      Class: A| Class: B |Class: C| Class: D| Class: E
- ------------- |   ------ | ------ | ------ | ------ | ------
-Sensitivity      |      1.0000   0.9912   0.9859   0.9894   0.9981
-Specificity     |       0.9976   0.9974   0.9979   0.9992   1.0000
-Pos Pred Value    |     0.9939   0.9895   0.9899   0.9957   1.0000
-Neg Pred Value    |     1.0000   0.9978   0.9971   0.9979   0.9996
-Prevalence       |      0.2834   0.1977   0.1717   0.1634   0.1838
-Detection Rate   |      0.2834   0.1960   0.1693   0.1616   0.1835
-Detection Prevalence |  0.2851   0.1981   0.1710   0.1623   0.1835
-Balanced Accuracy  |    0.9988   0.9943   0.9919   0.9943   0.9991
+ -------------   |        ------ | ------ | ------ | ------ | ------
+Sensitivity      |      1.0000  | 0.9912  | 0.9859  | 0.9894 |  0.9981
+Specificity       |       0.9976 | 0.9974 |  0.9979  |  0.9992 |  1.0000
+Pos Pred Value    |     0.9939 |  0.9895 |  0.9899  | 0.9957  | 1.0000
+Neg Pred Value    |     1.0000  | 0.9978 |   0.9971  | 0.9979 |  0.9996
+Prevalence       |      0.2834  | 0.1977  | 0.1717  | 0.1634  | 0.1838
+Detection Rate   |      0.2834  | 0.1960  | 0.1693  | 0.1616 |  0.1835
+Detection Prevalence |  0.2851  |0.1981 |  0.1710 |  0.1623  | 0.1835
+Balanced Accuracy  |    0.9988  | 0.9943  | 0.9919  | 0.9943  | 0.9991
 
 
 **Random Forest Model output for 20 testing data sample**
