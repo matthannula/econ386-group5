@@ -1,0 +1,508 @@
+---
+title: "Group Markdown"
+output: html_document
+---
+
+##**Executive Summary
+
+
+
+
+The following is each of the five group members code for his/her predictive models. 
+
+1. George Saunderson
+```{r}
+library(dplyr)
+library(caret)
+library(randomForest)
+library(e1071)
+library(ggplot2)
+library(lattice)
+setwd("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2")
+```
+
+Loads dplyr, caret, randomForest, e1071, ggplot2, and lattice for use with rf analysis. Assumes all packages are already installed If NOT installed, use "install.packages("dplyr"),install.packages("caret"), install.packages("randomForest"), install.packages("e1071"), install.packages("ggplot2"), and install.packages("lattice") all on separate lines before loading them.
+
+```{r}
+dataset_training <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/training.csv", header = TRUE)
+dataset_testing <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/testing.csv", header = TRUE)
+```
+
+Simply imports the data with titles for the beginning steps of the data.
+
+```{r}
+dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
+dataset_training$X <- NULL
+dataset_training_cleanF <- dataset_training[ ,colSums(is.na(dataset_training)) == 0]
+dataset_testing[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
+dataset_testing$X <- NULL
+dataset_testing_cleanF <- dataset_testing[ ,colSums(is.na(dataset_testing)) == 0]
+```
+
+Removes unnecessary rows and columns from both test and train datasets
+
+```{r}
+set.seed(0386)
+training_data_index <- createDataPartition(dataset_training_cleanF$classe, p=0.70, list=FALSE)
+test_trainingdata_1 <- dataset_training_cleanF[-training_data_index,]
+training_data <- dataset_training_cleanF[training_data_index, ]
+```
+
+It separates the training data at a 70-30 split, 70% of the training data will be used for training and 30% of the training data with be used for testing. Sets seet at 0386.
+
+```{r}
+set.seed(0386)
+test_trainingdata_2 <- sample(1:nrow(test_trainingdata_1), size = 0.5*nrow(test_trainingdata_1))
+tune_data <- test_trainingdata_1[test_trainingdata_2, ]
+test_data <- test_trainingdata_1[-test_trainingdata_2, ]
+```
+
+Separates the 30% of training data that will be used for testing into two parts, creating a 70-15-15 split where 70 = training, 15 = tuning, and 15 = testing. Sets seet at 0386. 
+
+```{r}
+dim(dataset_testing)
+dim(dataset_testing_cleanF)
+dim(dataset_training)
+dim(dataset_training_cleanF)
+dim(training_data)
+dim(test_trainingdata_1)
+length(as.numeric(test_trainingdata_2))
+dim(tune_data)
+dim(test_data)
+```
+
+Shows the dimensions of each set of data so far.
+
+```{r}
+set.seed(0386)
+control <- trainControl(method = "cv", 20)
+metric <- "Accuracy"
+```
+
+Splits dataset into 20 different parts for crossvalidation. Sets seet at 0386.
+
+```{r}
+set.seed(0386)
+rf_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rf", metric = metric, trControl = control)
+CART_classe <- train(classe ~ ., data = training_data, na.action = na.omit, method = "rpart", metric = metric, trControl = control)
+results_classe <- resamples(list(cart=CART_classe, rf=rf_classe))
+summary(results_classe)
+```
+
+Creates a random forest model and sets seet at 0386. Displays summary to make decision on optimal model.
+
+```{r}
+prediction_rf <- predict(rf_classe, test_data)
+cM_rf <- confusionMatrix(prediction_rf, test_data$classe)
+```
+
+Produces both a prediction and the confusion matrix for the given prediction of the test data.
+
+
+```{r}
+summary(rf_classe)
+print(rf_classe)
+```
+
+Shows the results of the model in graphics.
+
+```{r}
+prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
+```
+
+
+
+
+
+2. Christelle Matsuda
+
+```{r}
+filepath<-"/Users/Christelle/Desktop/Prediction Project"  
+setwd(filepath)
+#Load libraries
+library(plyr)
+library(caret)
+library(nnet)
+library(brew)
+library(sos)
+library(MASS)
+require(dplyr)
+library(tree)
+
+```
+
+#Import Data
+#Bring in the training (larger) file
+
+```{r}
+proj2training <- read.csv("training.csv")
+```
+
+## Final Testing Set For Output
+
+```{r}
+finaltest <- read.csv("testing.csv")
+finaltest <- data.frame(finaltest)
+```
+
+```{r}
+relevantvar <- c("user_name","num_window","roll_belt","pitch_belt",	"yaw_belt",	"total_accel_belt",
+                 "gyros_belt_x",	"gyros_belt_y",	"gyros_belt_z",	"accel_belt_x","accel_belt_y","accel_belt_z",
+                 "magnet_belt_x",	"magnet_belt_y", "magnet_belt_z",	
+                 "roll_arm","pitch_arm", "yaw_arm",	"total_accel_arm",
+                 "gyros_arm_x",	"gyros_arm_y",	"gyros_arm_z",	
+                 "accel_arm_x",	"accel_arm_y","accel_arm_z",
+                 "magnet_arm_x",	"magnet_arm_y", "magnet_arm_z",
+                 "roll_dumbbell", "pitch_dumbbell",	"yaw_dumbbell",
+                 "total_accel_dumbbell",
+                 "gyros_dumbbell_x",	"gyros_dumbbell_y",	"gyros_dumbbell_z",	
+                 "accel_dumbbell_x",	"accel_dumbbell_y","accel_dumbbell_z",
+                 "magnet_dumbbell_x",	"magnet_dumbbell_y",	"magnet_dumbbell_z",	
+                 "roll_forearm",	"pitch_forearm",	"yaw_forearm",
+                 "total_accel_forearm",
+                 "gyros_forearm_x",	"gyros_forearm_y",	"gyros_forearm_z",
+                 "accel_forearm_x",	"accel_forearm_y",	"accel_forearm_z",
+                 "magnet_forearm_x",	"magnet_forearm_y",	"magnet_forearm_z",
+                 "classe")
+proj2training <- select(proj2training,relevantvar)
+finaltest<- select(finaltest,relevantvar[1:54])
+```
+
+# Partition Data
+
+```{r}
+set.seed(0386)
+trainingRowIndexProj2<-sample(1:nrow(proj2training), size = .7*nrow(proj2training))
+```
+
+#Training Dataset
+```{r}
+training<-proj2training[trainingRowIndexProj2, ]
+```
+
+#Testing Dataset
+
+```{r}
+testing<-proj2training[-trainingRowIndexProj2, ]
+```
+
+```{r}
+model <- train(classe~., data = training, method = "rf",
+               trControl = trainControl(method = "cv", number = 5, verboseIter = TRUE)
+)
+```
+
+```{r}
+tree_predict <- predict(model,testing)
+head(tree_predict)
+```
+
+Checking accuracy 
+
+```{r}
+total <- 0
+count <- 0
+for(k in 1:length(tree_predict))
+{
+  total <- total +1
+  if (testing$classe[k]==tree_predict[k])
+  {
+    count <- count + 1
+  }
+}
+percent<- count/total
+percent
+```
+
+```{r}
+final_predictions <- predict(model,finaltest)
+```
+
+
+
+
+
+
+
+3. Gianna Rusca
+
+Set working directory
+```{r}
+setwd("/Users/giannarusca/Desktop"")
+```
+
+Install and load packages
+```{r}
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("plyr")
+install.packages("dplyr")
+install.packages("caret")
+install.packages("tree")
+library(lattice)
+library(ggplot2)
+library(plyr)
+library(caret)
+library(nnet)
+library(brew)
+library(sos)
+library(MASS)
+require(dplyr)
+library(tree)
+```
+
+In excel created a numeric "move" variable to train data prior to uploading (A=1, B=2, C=3, D=4, E=5)
+
+Upload the training and testing file from desktop
+```{r}
+proj2trainfull <- read.csv("training.csv", header = TRUE)
+proj2test<- read.csv("testing.csv", header = TRUE)
+```
+
+Clean up rows and column (get rid of NAs and blanks)
+```{r}
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
+```
+
+Clean up columns 
+```{r}
+proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+```
+
+Partition the new cleaned dataset into 70:15:15 ratio for training, tuning and testing, respectively
+```{r}
+set.seed(0386)
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
+testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
+```
+
+Take all the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
+```{r}
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+tuneFinal <-testTune[testTuneIndexProj2, ]
+testFinal <-testTune[-testTuneIndexProj2, ]
+```
+
+Linear Model
+```{r}
+output<-lm(move~yaw_belt+total_accel_belt+accel_belt_x+accel_belt_y+accel_belt_z+magnet_belt_x+magnet_belt_y+magnet_belt_z+roll_arm+pitch_arm+yaw_arm+total_accel_arm+gyros_arm_x+gyros_arm_y+gyros_arm_z+accel_forearm_x+accel_forearm_y+accel_forearm_z+magnet_forearm_x+magnet_forearm_y+magnet_forearm_z+gyros_forearm_x+gyros_forearm_y+gyros_forearm_z, data=trainFinal)
+```
+
+View results of linear model 
+```{r}
+summary(output)
+```
+
+Predict on tune data and view
+```{r}
+model_predict<- predict(output,testTune)
+summary(model_predict)
+View(model_predict)
+```
+
+Logistic Model 
+```{r}
+library("nnet")
+output2<- multinom(move~roll_belt+pitch_belt+yaw_belt+total_accel_belt+accel_belt_x+accel_belt_y+accel_belt_z+magnet_belt_x+magnet_belt_y+magnet_belt_z+roll_arm+pitch_arm+yaw_arm+total_accel_arm+gyros_arm_x+gyros_arm_y+gyros_arm_z+accel_forearm_x+accel_forearm_y+accel_forearm_z+magnet_forearm_x+magnet_forearm_y+magnet_forearm_z+gyros_forearm_x+gyros_forearm_y+gyros_forearm_z+accel_dumbbell_x+accel_dumbbell_y+accel_dumbbell_z+magnet_dumbbell_x+magnet_dumbbell_y+magnet_dumbbell_z+roll_forearm+pitch_forearm+yaw_forearm+total_accel_forearm, data=trainFinal)
+summary(output2)
+```
+
+Predict on tune data and view 
+```{r}
+model_predict2<- predict(output2,testTune)
+summary(model_predict2)
+```
+
+Predict on final test data and view 
+```{r}
+model_predict2_final<- predict(output2,testFinal)
+summary(model_predict2)
+View(model_predict2_final)
+summary(model_predict2_final)
+```
+
+Predict on Levkoffs small test data 
+```{r}
+model_predict3_final<-predict(output2,proj2test)
+View(model_predict3_final)
+```
+
+Random Forest: Best accuracy given in comparison to other 2 models
+Split data into 8 parts for cross validation and set seed at 0386 (class number)
+```{r}
+set.seed(0386)
+control <- trainControl(method="cv", number=8)
+metric <- "Accuracy"
+```
+
+```{r}
+library(caret)
+set.seed(0386)
+```
+
+Package for rf 
+```{r}
+install.packages('e1071', dependencies=TRUE)
+```
+
+Run rf on final training data 
+```{r}
+output4 <- train(classe~., data=trainFinal, method="rf", metric=metric, trControl=control)
+```
+
+Run rf model on testing data
+```{r}
+model_predict_4<- predict(output4, testFinal)
+confusionMatrix(model_predict_4, testFinal$classe)
+```
+
+Run rf model on Levkoff small test data
+```{r}
+final_model<- predict(output4, proj2test)
+```
+
+
+
+4. Matthew Parra
+
+#Set working directory 
+```{r}
+setwd("C:/Users/Mary/Desktop")
+```
+
+#Install packages
+```{r}
+install.packages("lattice") install.packages("ggplot2") install.packages("plyr") install.packages("dplyr") install.packages("caret")
+```
+
+#Load Libraries
+```{r}
+ibrary(lattice) library(ggplot2) library(plyr) library(dplyr) library(caret)
+```
+
+Data Cleaning and Preprocessing 
+```{r}
+proj2trainfull <- read.csv("training.csv", header = TRUE)
+
+```
+
+#Remove unnecessary rows and columns
+```{r}
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no") proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0]
+```
+
+#View the CSV to determine unnecessary columns. 
+```{r}
+proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+```
+
+#Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing
+```{r}
+set.seed(0386) trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3)) trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ] testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
+```
+
+#Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing
+```{r}
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune)) tuneFinal <-testTune[testTuneIndexProj2, ] testFinal <-testTune[-testTuneIndexProj2, ]
+```
+
+```{r}
+control <- trainControl(method="cv", number=10) metric <- "Accuracy" set.seed(7) fit.lda <- train(classe~., data=trainFinal, method="lda", metric=metric, trControl=control)
+```
+
+```{r}
+set.seed(7) fit.knn <- train(classe~., data=trainFinal, method="knn", metric=metric, trControl=control)
+```
+
+#Predict test data 
+```{r}
+predictions <- predict(fit.knn, testFinal) confusionMatrix(predictions, testFinal$classe)
+```
+
+
+
+
+
+
+
+5. Matt Hannula 
+
+#Set working directory
+```{r}
+setwd("Users/Matty/Documents/GitHub/ECON386REPO/project2")
+```
+
+#install Packages and load libraries 
+```{r}
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("plyr")
+install.packages("dplyr")
+install.packages("caret")
+library(lattice)
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(caret)
+```
+
+#Data Cleaning and Preprocessing
+#Bring in the training (larger) file
+```{r}
+proj2trainfull <- read.csv("training.csv", header = TRUE)
+```
+
+#View the dataset if desired.
+```{r}
+View(proj2trainfull)
+head(proj2trainfull)
+```
+
+#Remove unnecessary rows and columns.
+```{r}
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
+```
+
+#View the CSV to determine unnecessary columns. Drop empty columns.
+```{r}
+proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+```
+
+#Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
+```{r}
+set.seed(0386)
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
+testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
+```
+
+#Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
+```{r}
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+tuneFinal <-testTune[testTuneIndexProj2, ]
+testFinal <-testTune[-testTuneIndexProj2, ]
+```
+#We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respectively.
+
+#Setting ML parameters
+```{r}
+set.seed(0386)
+control <- trainControl(method="cv", number=10)
+metric <- "Accuracy"
+```
+
+#Testing Random Forest
+```{r}
+set.seed(0386)
+mattRF <- train(classe~., data=trainFinal, method="rf", metric=metric, trControl=control)
+RFpredict <- predict(mattRF, testFinal)
+confusionMatrix(RFpredict, testFinal$classe)
+```
+
+
+#All 5 memebers of our group uploaded his or her own code in order to select the model that predicts best on the test data. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out of sample (on the testing data). 
+
+#The final model we decided to implement is 
