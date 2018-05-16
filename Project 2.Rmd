@@ -32,9 +32,9 @@ Simply imports the data with titles for the beginning steps of the data.
 dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
 dataset_training$X <- NULL
 dataset_training_cleanF <- dataset_training[ ,colSums(is.na(dataset_training)) == 0]
+dataset_testing[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
 dataset_testing$X <- NULL
 dataset_testing_cleanF <- dataset_testing[ ,colSums(is.na(dataset_testing)) == 0]
-
 ```
 Removes unnecessary rows and columns from both test and train datasets
 
@@ -73,7 +73,7 @@ set.seed(0386)
 control <- trainControl(method = "cv", 20)
 metric <- "Accuracy"
 ```
-Splits dataset into 20 different parts for crossvalidation. Sets seet at 5 (group number = 5).
+Splits dataset into 20 different parts for crossvalidation. Sets seet at 0386.
 
 ```{r}
 set.seed(0386)
@@ -95,3 +95,8 @@ summary(rf_classe)
 print(rf_classe)
 ```
 Shows the results of the model in graphics.
+
+```{r}
+prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
+```
+Prediction on final test dataset.
