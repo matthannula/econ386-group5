@@ -4,7 +4,7 @@ output: html_document
 ---
 
 
-# **Prediction Project**
+### **Prediction Project**
 
 ## **Executive Summary--Group 5**
 
@@ -417,7 +417,11 @@ install.packages("lattice") install.packages("ggplot2") install.packages("plyr")
 
 #Load Libraries
 ```{r}
-ibrary(lattice) library(ggplot2) library(plyr) library(dplyr) library(caret)
+library(lattice)
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(caret)
 ```
 
 Data Cleaning and Preprocessing 
@@ -428,7 +432,8 @@ proj2trainfull <- read.csv("training.csv", header = TRUE)
 
 #Remove unnecessary rows and columns
 ```{r}
-proj2cleanstep1 <- filter(proj2trainfull, new_window == "no") proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0]
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0]
 ```
 
 #View the CSV to determine unnecessary columns. 
@@ -438,16 +443,20 @@ proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
 
 #Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing
 ```{r}
-set.seed(0386) trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3)) trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ] testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
+set.seed(0386) trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ] testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
 ```
 
 #Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing
 ```{r}
-testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune)) tuneFinal <-testTune[testTuneIndexProj2, ] testFinal <-testTune[-testTuneIndexProj2, ]
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+tuneFinal <-testTune[testTuneIndexProj2, ] testFinal <-testTune[-testTuneIndexProj2, ]
 ```
 
 ```{r}
-control <- trainControl(method="cv", number=10) metric <- "Accuracy" set.seed(7) fit.lda <- train(classe~., data=trainFinal, method="lda", metric=metric, trControl=control)
+control <- trainControl(method="cv", number=10)
+metric <- "Accuracy" set.seed(7)
+fit.lda <- train(classe~., data=trainFinal, method="lda", metric=metric, trControl=control)
 ```
 
 ```{r}
