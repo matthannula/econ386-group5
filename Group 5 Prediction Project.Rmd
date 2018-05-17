@@ -16,32 +16,48 @@ Human Activity Recognition database built from the recordings of 30 subjects per
 The purpose of our project is to use a large set of training data (with inputs and outputs) to creaste a model to prdict, out-of-sample on the test dataset (a smaller set of data with input features only).
 
 ## **Cleaning and Preprocessing the Data:**
-
-
-```{r}
-dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
-dataset_training$X <- NULL
-dataset_training_cleanF <- dataset_training[ ,colSums(is.na(dataset_training)) == 0]
-dataset_testing[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
-dataset_testing$X <- NULL
-dataset_testing_cleanF <- dataset_testing[ ,colSums(is.na(dataset_testing)) == 0]
+#Data Cleaning and Preprocessing
+#Bring in the training (larger) file
+```
+proj2trainfull <- read.csv("training.csv", header = TRUE)
+proj2outofsample <- read.csv("testing.csv", header = TRUE)
 ```
 
-Removes unnecessary rows and columns from both test and train datasets
-```{r}
+View the dataset if desired.
+```
+View(proj2trainfull)
+head(proj2trainfull)
+```
+
+Remove unnecessary rows and columns.
+```
+proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
+proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
+```
+
+#View the CSV to determine unnecessary columns. Drop empty columns.
+```
+proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
+```
+
+Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
+Group set the seed at 0386 to ensure reproducibility.
+```
 set.seed(0386)
-training_data_index <- createDataPartition(dataset_training_cleanF$classe, p=0.70, list=FALSE)
-test_trainingdata_1 <- dataset_training_cleanF[-training_data_index,]
-training_data <- dataset_training_cleanF[training_data_index, ]
+trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
+trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
+testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
 ```
 
-It separates the training data at a 70-30 split, 70% of the training data will be used for training and 30% of the training data with be used for testing. Sets seet at 0386.
-```{r}
-set.seed(0386)
-test_trainingdata_2 <- sample(1:nrow(test_trainingdata_1), size = 0.5*nrow(test_trainingdata_1))
-tune_data <- test_trainingdata_1[test_trainingdata_2, ]
-test_data <- test_trainingdata_1[-test_trainingdata_2, ]
+Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
 ```
+testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
+tuneFinal <-testTune[testTuneIndexProj2, ]
+testFinal <-testTune[-testTuneIndexProj2, ]
+```
+
+We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respectively.
+
 
 
 
