@@ -565,7 +565,7 @@ confusionMatrix(RFpredict, testFinal$classe)
 
 # **Selection of Final Model and Discussion**
 
-All 5 memebers of our group uploaded his or her own code in order to select the model that gave the best prediction on the test data. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out-of-sample (on the testing data). 
+All 5 members of our group uploaded his or her own code in order to select the model that gave the best prediction on the test data. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out-of-sample (on the testing data). 
 
 The final model we decided to implement was Matt's Random Forest. This used 10 parts for cross validation and a seed of 0386. It had the highest degree of accuracy at 0.9938 out-of-sample and a 95% confidence interval of (0.9902, 0.9963) and a p-value of < 2.2 e-16 which was the smallest out of all of the models.
 
