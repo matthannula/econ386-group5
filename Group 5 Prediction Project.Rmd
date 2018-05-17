@@ -13,13 +13,16 @@ The raw data used in this project is sourced from text files from: https://githu
 
 This project uses the Human Activity Recognition database built from the recordings of 30 subjects performing activities of daily living (ADL) while carrying a waist-mounted smartphone with embedded inertial sensors.The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years by UCI. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Our testing data provided by Dr. Levkoff had classification data points for each measurement, denoting that each was associated with one of five activities. Each activity was assigned a letter A-B-C-D-E in the training data provided. In the out of sample testing data provided, this identifying information was removed.
 
+
 The purpose of our project is to use a large set of training data (with inputs and outputs) to create a model to predict activities using out-of-sample data from a provided test dataset (a smaller set of data with input features only).
 
 **Group Methodology**
+
 Our group began this project as soon as it was assigned, and before many of the machine learning techniques were discussed in great detail. We approached this problem from an individualistic perspective, believing that we might find unique approaches by pursuing solutions independently. Each group member utilized *at least two* different models, and brought their best model to the intragroup competition. Our goal was to create a model with the most accurate classification of out of sample data as possible. We did not approach this problem with the explicit intent to prioritize computational efficiency, although some members discuss this in their work. In a real-world application working for a firm, this and similar constraints would certainly have impacted model selection.
 
 
 **Cleaning and Preprocessing the Data:**
+
 Data Cleaning and Preprocessing
 Bring in the training (larger) file
 ```
