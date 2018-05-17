@@ -650,6 +650,8 @@ Balanced Accuracy      0.9971   0.9904   0.9890   0.9934   0.9988
 > #Run random forest prediction on test data from Levkoff
 > final_model<- predict(output4, proj2test)
 Error in predict.train(output4, proj2test) : object 'proj2test' not found
+
+#George Saunderson
 > dataset_training <- read.csv("training.csv", header = TRUE)
 > dataset_testing <- read.csv("testing.csv", header = TRUE)
 > dataset_training[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- NULL
