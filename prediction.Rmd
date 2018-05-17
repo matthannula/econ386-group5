@@ -253,6 +253,8 @@ for(k in 1:length(tree_predict))
 }
 percent<- count/total
 percent
+
+confusionMatrix(tree_predict,testing$classe)
 ```
 
 ```{r}
