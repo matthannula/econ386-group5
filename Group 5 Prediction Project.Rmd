@@ -4,9 +4,9 @@ output: html_document
 ---
 
 
-### **Prediction Project**
+***Prediction Project***
 
-## **Executive Summary--Group 5**
+**Executive Summary--Group 5**
 
 
 The raw data used in this project is sourced from text files from: https://github.com/slevkoff/ECON386REPO/tree/master/Data%20Cleaning%20Project/Task%201
@@ -170,7 +170,7 @@ Final prediction on test dataset (actual test file).
 
 
 
-# **2. Christelle Matsuda**
+**2. Christelle Matsuda**
 After trying a multinomial logistic regression, a tree, and a random forest, the logistic regression gave an accuracy of about 70%, the tree gave an accuracy of about 77%, and random forest gave the most accurate output. After running the random forest with cross validation, it was 98% accurate on the data we tested it on, explained below:
 ```{r}
 filepath<-"/Users/Christelle/Desktop/Prediction Project"  
@@ -499,14 +499,15 @@ predictions <- predict(fit.knn, testFinal) confusionMatrix(predictions, testFina
 
 
 
-# **5. Matt Hannula**
+**5. Matt Hannula**
 
-#Set working directory
+
+Set working directory
 ```{r}
-setwd("Users/Matty/Documents/GitHub/ECON386REPO/project2")
+setwd("Users/Matt/Documents/GitHub/ECON386REPO/project2")
 ```
 
-#install Packages and load libraries 
+Install Packages and load libraries 
 ```{r}
 install.packages("lattice")
 install.packages("ggplot2")
@@ -520,21 +521,21 @@ library(dplyr)
 library(caret)
 ```
 
-#Data Cleaning and Preprocessing
-#Bring in the training (larger) file
-#Bring in testing file
+Data Cleaning and Preprocessing
+Bring in the training (larger) file
+Bring in testing file
 ```{r}
 proj2trainfull <- read.csv("training.csv", header = TRUE)
 proj2test <- read.csv("testing.csv", header = TRUE)
 ```
 
-#View the dataset if desired.
+View the dataset if desired.
 ```{r}
 View(proj2trainfull)
 head(proj2trainfull)
 ```
 
-#Remove unnecessary rows and columns.
+Remove unnecessary rows and columns.
 ```{r}
 proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
 proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
@@ -542,13 +543,13 @@ cleanstep1 <- filter(proj2test, new_window == "no")
 cleanstep2 <- cleanstep1[, colSums(is.na(cleanstep1)) == 0] 
 ```
 
-#View the CSV to determine unnecessary columns. Drop empty columns.
+View the CSV to determine unnecessary columns. Drop empty columns.
 ```{r}
 proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
 cleanstep3 <- cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
 ```
 
-#Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
+Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
 ```{r}
 set.seed(0386)
 trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2cleanstep3))
@@ -556,22 +557,64 @@ trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
 testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
 ```
 
-#Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
+Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
 ```{r}
 testTuneIndexProj2 <- sample(1:nrow(testTune), size = .5*nrow(testTune))
 tuneFinal <-testTune[testTuneIndexProj2, ]
 testFinal <-testTune[-testTuneIndexProj2, ]
 ```
-#We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respectively.
+We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respectively.
 
-#Setting ML parameters
+Setting ML parameters
 ```{r}
 set.seed(0386)
 control <- trainControl(method="cv", number=10)
 metric <- "Accuracy"
 ```
 
-#Testing Random Forest
+
+```
+Testing a CART model.
+set.seed(0386)
+control <- trainControl(method="cv", number=10)
+metric <- "Accuracy"
+mattCART <- train(classe~., data=trainFinal, method="rpart", metric=metric, trControl=control)
+```
+
+
+Check model efficiency.
+```
+CARTpredict <- predict(mattCART, testFinal)
+confusionMatrix(CARTpredict, testFinal$classe)
+```
+
+
+Linear SVM
+```
+set.seed(0386)
+grid <- expand.grid(C = c(5))
+mattSVMlinearControl <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
+mattSVMlinear <- train(classe ~., data = trainFinal, method = "svmLinear",
+                                 trControl=mattSVMlinearControl,
+                                 tuneGrid = grid,
+                                  tuneLength = 10)
+print(mattSVMlinear)
+SVMlinearpredict <- predict(mattSVMlinear, testFinal)
+confusionMatrix(SVMlinearpredict, testFinal$classe)
+```
+
+Testing a Non-Linear SVM Model
+```
+set.seed(0386)
+mattSVM <- train(classe~., data=trainFinal, method="svmRadial", metric=metric, trControl=control)
+```
+
+Check model efficiency.
+```
+SVMpredict <- predict(mattSVM, testFinal)
+```
+
+Testing Random Forest (Highest accuracy achieved with this model)
 ```{r}
 set.seed(0386)
 mattRF <- train(classe~., data=trainFinal, method="rf", metric=metric, trControl=control)
@@ -590,9 +633,9 @@ confusionMatrix(RFpredict, testFinal$classe)
 
 # **Selection of Final Model and Discussion**
 
-All 5 members of our group uploaded his or her own code in order to select the model that gave the best prediction on the test data. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out-of-sample (on the testing data). 
+All 5 members of our group uploaded his or her own code in order to select the model that gave the best prediction on the test data. All members utilized at least two models before settling on their most accurate, and even when group members utilized similar techniques, each individual approach was unique so results were not identical. We used the resample and list functions in order to compare the models side by side in order to chose the model with the highest accuracy out-of-sample (on the testing data). 
 
-The final model we decided to implement was Matt's Random Forest. This used 10 parts for cross validation and a seed of 0386. It had the highest degree of accuracy at 0.9938 out-of-sample and a 95% confidence interval of (0.9902, 0.9963) and a p-value of < 2.2 e-16 which was the smallest out of all of the models.
+The final model we decided to implement was Matt Hannula's Random Forest. This used 10 parts for cross validation and a seed of 0386. It had the highest degree of accuracy at 0.9938 out-of-sample and a 95% confidence interval of (0.9902, 0.9963) and a p-value of < 2.2 e-16 which was the smallest out of all of the models.
 
 
 Overall Statistics
