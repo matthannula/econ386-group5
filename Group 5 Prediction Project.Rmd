@@ -11,17 +11,22 @@ output: html_document
 
 The raw data used in this project is sourced from text files from: https://github.com/slevkoff/ECON386REPO/tree/master/Data%20Cleaning%20Project/Task%201
 
-Human Activity Recognition database built from the recordings of 30 subjects performing activities of daily living (ADL) while carrying a waist-mounted smartphone with embedded inertial sensors.The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years by UCI. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist.
+This project uses the Human Activity Recognition database built from the recordings of 30 subjects performing activities of daily living (ADL) while carrying a waist-mounted smartphone with embedded inertial sensors.The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years by UCI. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Our testing data provided by Dr. Levkoff had classification data points for each measurement, denoting that each was associated with one of five activities. Each activity was assigned a letter A-B-C-D-E in the training data provided. In the out of sample testing data provided, this identifying information was removed.
 
-The purpose of our project is to use a large set of training data (with inputs and outputs) to creaste a model to prdict, out-of-sample on the test dataset (a smaller set of data with input features only).
+The purpose of our project is to use a large set of training data (with inputs and outputs) to create a model to predict activities using out-of-sample data from a provided test dataset (a smaller set of data with input features only).
 
-## **Cleaning and Preprocessing the Data:**
-#Data Cleaning and Preprocessing
-#Bring in the training (larger) file
+**Group Methodology**
+Our group began this project as soon as it was assigned, and before many of the machine learning techniques were discussed in great detail. We approached this problem from an individualistic perspective, believing that we might find unique approaches by pursuing solutions independently. Each group member utilized *at least two* different models, and brought their best model to the intragroup competition. Our goal was to create a model with the most accurate classification of out of sample data as possible. We did not approach this problem with the explicit intent to prioritize computational efficiency, although some members discuss this in their work. In a real-world application working for a firm, this and similar constraints would certainly have impacted model selection.
+
+
+**Cleaning and Preprocessing the Data:**
+Data Cleaning and Preprocessing
+Bring in the training (larger) file
 ```
 proj2trainfull <- read.csv("training.csv", header = TRUE)
 proj2outofsample <- read.csv("testing.csv", header = TRUE)
 ```
+
 
 View the dataset if desired.
 ```
@@ -29,16 +34,19 @@ View(proj2trainfull)
 head(proj2trainfull)
 ```
 
+
 Remove unnecessary rows and columns.
 ```
 proj2cleanstep1 <- filter(proj2trainfull, new_window == "no")
 proj2cleanstep2 <- proj2cleanstep1[, colSums(is.na(proj2cleanstep1)) == 0] 
 ```
 
-#View the CSV to determine unnecessary columns. Drop empty columns.
+
+View the CSV to determine unnecessary columns. Drop empty columns.
 ```
 proj2cleanstep3 <- proj2cleanstep2[, -c(1:7, 12:20, 43:48, 52:60, 74:82)]
 ```
+
 
 Partition the cleaned dataset into 70:15:15 ratio for training:tuning:testing.
 Group set the seed at 0386 to ensure reproducibility.
@@ -48,6 +56,7 @@ trainingRowIndexProj2 <-sample(1:nrow(proj2cleanstep3), size = .7*nrow(proj2clea
 trainFinal <-proj2cleanstep3[trainingRowIndexProj2, ]
 testTune <-proj2cleanstep3[-trainingRowIndexProj2, ]
 ```
+
 
 Take the remaining 30% of the data, and split into 15/15 ratio for tuning/testing.
 ```
@@ -63,7 +72,7 @@ We now have a 70/15/15 split with trainFinal, tuneFinal, and testFinal, respecti
 
 
 
-## **Models by Each Member**
+**Models by Each Member**
 
 The following is each of the five group members code for his/her predictive models. 
 
