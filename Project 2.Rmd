@@ -85,10 +85,10 @@ summary(results_classe)
 Creates a random forest model and sets seet at 5 (group number = 5). Displays summary to make decision on optimal model.
 
 ```{r}
-prediction_rf <- predict(rf_classe, test_data)
-cM_rf <- confusionMatrix(prediction_rf, test_data$classe)
+prediction_tue_rf <- predict(rf_classe, tune_data)
+cM_tune_rf <- confusionMatrix(prediction_rf, tune_data$classe)
 ```
-Produces both a prediction and the confusion matrix for the given prediction of the test data.
+Produces both a prediction and the confusion matrix for the given prediction of the tune data.
 
 ```{r}
 summary(rf_classe)
@@ -97,6 +97,13 @@ print(rf_classe)
 Shows the results of the model in graphics.
 
 ```{r}
-prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
+prediction_test <- predict(rf_classe, test_data)
+cM_test_rf <- confusionMatrix(prediction_rf, test_data$classe)
 ```
-Prediction on final test dataset.
+Prediction on test partition dataset (15%).
+
+```{r}
+prediction_final <- predict(rf_classe, dataset_testing_cleanF)
+cm_final <- confusionMatrix(prediction_final, dataset_testing_cleanF$problem_id)
+```
+Final prediction on test dataset (actual test file).
