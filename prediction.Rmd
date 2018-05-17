@@ -61,14 +61,12 @@ library(ggplot2)
 library(lattice)
 setwd("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2")
 ```
-
-Loads dplyr, caret, randomForest, e1071, ggplot2, and lattice for use with rf analysis. Assumes all packages are already installed If NOT installed, use "install.packages("dplyr"),install.packages("caret"), install.packages("randomForest"), install.packages("e1071"), install.packages("ggplot2"), and install.packages("lattice") all on separate lines before loading them.
+Loads dplyr, caret, randomForest, e1071, ggplot2, and lattice for use with rf analysis. *Assumes all packages are already installed* If NOT installed, use "install.packages("dplyr"),install.packages("caret"), install.packages("randomForest"), install.packages("e1071"), install.packages("ggplot2"), and install.packages("lattice") all on separate lines before loading them.
 
 ```{r}
 dataset_training <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/training.csv", header = TRUE)
 dataset_testing <- read.csv("/Users/geosau_3/Documents/USD/Spring 2018/ECON 386 - Big Data & Business/Project 2/testing.csv", header = TRUE)
 ```
-
 Simply imports the data with titles for the beginning steps of the data.
 
 ```{r}
@@ -79,7 +77,6 @@ dataset_testing[c(12:17,20,23,26,69:74,87:92,95,98,101,125:130,133,136,139)] <- 
 dataset_testing$X <- NULL
 dataset_testing_cleanF <- dataset_testing[ ,colSums(is.na(dataset_testing)) == 0]
 ```
-
 Removes unnecessary rows and columns from both test and train datasets
 
 ```{r}
@@ -88,7 +85,6 @@ training_data_index <- createDataPartition(dataset_training_cleanF$classe, p=0.7
 test_trainingdata_1 <- dataset_training_cleanF[-training_data_index,]
 training_data <- dataset_training_cleanF[training_data_index, ]
 ```
-
 It separates the training data at a 70-30 split, 70% of the training data will be used for training and 30% of the training data with be used for testing. Sets seet at 0386.
 
 ```{r}
@@ -97,7 +93,6 @@ test_trainingdata_2 <- sample(1:nrow(test_trainingdata_1), size = 0.5*nrow(test_
 tune_data <- test_trainingdata_1[test_trainingdata_2, ]
 test_data <- test_trainingdata_1[-test_trainingdata_2, ]
 ```
-
 Separates the 30% of training data that will be used for testing into two parts, creating a 70-15-15 split where 70 = training, 15 = tuning, and 15 = testing. Sets seet at 0386. 
 
 ```{r}
@@ -111,7 +106,6 @@ length(as.numeric(test_trainingdata_2))
 dim(tune_data)
 dim(test_data)
 ```
-
 Shows the dimensions of each set of data so far.
 
 ```{r}
@@ -119,7 +113,6 @@ set.seed(0386)
 control <- trainControl(method = "cv", 20)
 metric <- "Accuracy"
 ```
-
 Splits dataset into 20 different parts for crossvalidation. Sets seet at 0386.
 
 ```{r}
@@ -129,29 +122,26 @@ CART_classe <- train(classe ~ ., data = training_data, na.action = na.omit, meth
 results_classe <- resamples(list(cart=CART_classe, rf=rf_classe))
 summary(results_classe)
 ```
-
-Creates a random forest model and sets seet at 0386. Displays summary to make decision on optimal model.
+Creates random forest and CART models and sets seed at 0386. Displays summary to make decision on optimal model.
 
 ```{r}
-prediction_rf <- predict(rf_classe, test_data)
-cM_rf <- confusionMatrix(prediction_rf, test_data$classe)
+prediction_tune_rf <- predict(rf_classe, tune_data)
+cM_tune_rf <- confusionMatrix(prediction_rf, tune_data$classe)
 ```
-
-Produces both a prediction and the confusion matrix for the given prediction of the test data.
+Produces both a prediction and the confusion matrix for the given prediction of the tune data.
 
 
 ```{r}
 summary(rf_classe)
 print(rf_classe)
 ```
-
-Shows the results of the model in graphics.
+Shows the results of the model in statistical layout.
 
 ```{r}
-prediction_testFinal <- predict(rf_classe, dataset_testing_cleanF)
+prediction_final <- predict(rf_classe, dataset_testing_cleanF)
+cm_final <- confusionMatrix(prediction_final, dataset_testing_cleanF$problem_id)
 ```
-
-
+Final prediction on test dataset (actual test file).
 
 
 
