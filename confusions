@@ -82,6 +82,36 @@ Christelle's Random Forest Results
 > percent
 [1] 0.9983013
 
+         Reference
+Prediction    A    B    C    D    E
+         A 1667    2    0    0    0
+         B    0 1108    3    0    0
+         C    0    1 1008    4    0
+         D    0    0    0 1008    0
+         E    0    0    0    0 1086
+
+Overall Statistics
+                                          
+               Accuracy : 0.9983          
+                 95% CI : (0.9969, 0.9992)
+    No Information Rate : 0.2832          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.9979          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: A Class: B Class: C Class: D Class: E
+Sensitivity            1.0000   0.9973   0.9970   0.9960   1.0000
+Specificity            0.9995   0.9994   0.9990   1.0000   1.0000
+Pos Pred Value         0.9988   0.9973   0.9951   1.0000   1.0000
+Neg Pred Value         1.0000   0.9994   0.9994   0.9992   1.0000
+Prevalence             0.2832   0.1887   0.1717   0.1719   0.1845
+Detection Rate         0.2832   0.1882   0.1712   0.1712   0.1845
+Detection Prevalence   0.2835   0.1887   0.1721   0.1712   0.1845
+Balanced Accuracy      0.9998   0.9983   0.9980   0.9980   1.0000
+
 Gianna Confusion Matrix for Random Forest
 Confusion Matrix and Statistics
 
