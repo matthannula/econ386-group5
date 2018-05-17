@@ -146,7 +146,7 @@ Final prediction on test dataset (actual test file).
 
 
 # **2. Christelle Matsuda**
-
+After trying a multinomial logistic regression, a tree, and a random forest, the logistic regression gave an accuracy of about 70%, the tree gave an accuracy of about 77%, and random forest gave the most accurate output. After running the random forest with cross validation, it was 98% accurate on the data we tested it on, explained below:
 ```{r}
 filepath<-"/Users/Christelle/Desktop/Prediction Project"  
 setwd(filepath)
@@ -216,7 +216,7 @@ training<-proj2training[trainingRowIndexProj2, ]
 ```{r}
 testing<-proj2training[-trainingRowIndexProj2, ]
 ```
-
+Creating the random forest model with 5 cross validations
 ```{r}
 model <- train(classe~., data = training, method = "rf",
                trControl = trainControl(method = "cv", number = 5, verboseIter = TRUE)
@@ -246,7 +246,7 @@ percent
 
 confusionMatrix(tree_predict,testing$classe)
 ```
-
+By running the model prediction on the test data provided, this is the output:
 ```{r}
 final_predictions <- predict(model,finaltest)
 ```
